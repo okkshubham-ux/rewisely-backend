@@ -342,6 +342,10 @@ app.get("/api/convai/report/:conversation_id", (req, res) => {
   });
 });
 
+/* -------------------- LOVE LETTER GAME -------------------- */
+
+app.use("/api/loveletter", require("./loveletter/routes"));
+
 /* -------------------- HEALTH CHECK -------------------- */
 
 app.get("/", (req, res) => {

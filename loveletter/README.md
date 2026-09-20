@@ -1,9 +1,13 @@
 # Love Letter (2019 edition)
 
-A complete rules engine and REST API for Love Letter, the 21 card edition for
-2 to 6 players. The engine (`engine.js`) is plain state with no Express or
-network dependency; `routes.js` is a thin HTTP layer over it, mounted at
-`/api/loveletter` in `server.js`.
+A complete rules engine, REST API and browser client for Love Letter, the 21
+card edition for 2 to 6 players.
+
+- `engine.js` — the rules, as plain state with no Express or network dependency.
+  It loads both as a CommonJS module and as a plain browser script.
+- `cards.js` — the deck.
+- `routes.js` — the HTTP layer, mounted at `/api/loveletter`.
+- `public/index.html` + `ui.js` — a playable table at `/loveletter`.
 
 ## The deck
 
@@ -36,6 +40,20 @@ Cards are referred to by their value everywhere in the API.
 - Tokens to win: 6 (2 players), 5 (3), 4 (4), 3 (5 or 6). Override with
   `tokensToWin` when creating a game.
 - The round winner leads the next round.
+
+## Playing it
+
+```
+OPENAI_API_KEY=dummy npm start
+```
+
+Then open <http://localhost:3001/loveletter>. The table seats two to six; mark a
+seat as yours to play it, or leave it to a bot. Several human seats pass the
+device around, with a curtain between turns so nobody sees another hand.
+
+The page runs `engine.js` directly in the browser — the same file the API uses,
+served at `/loveletter/lib/` — so the rules can never drift between the two.
+`ui.js` is the static router that serves it.
 
 ## API
 

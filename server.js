@@ -345,6 +345,7 @@ app.get("/api/convai/report/:conversation_id", (req, res) => {
 /* -------------------- LOVE LETTER GAME -------------------- */
 
 app.use("/api/loveletter", require("./loveletter/routes"));
+app.use("/loveletter", require("./loveletter/ui"));
 
 /* -------------------- HEALTH CHECK -------------------- */
 

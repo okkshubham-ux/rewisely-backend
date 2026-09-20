@@ -1,7 +1,21 @@
+(function (root, factory) {
+  if (typeof module === "object" && module.exports) {
+    module.exports = factory(require("./cards"));
+  } else {
+    root.LoveLetterEngine = factory(root.LoveLetterCards);
+  }
+})(typeof self !== "undefined" ? self : globalThis, function (C) {
 "use strict";
 
-const crypto = require("crypto");
-const C = require("./cards");
+/* Node 19+ and every browser expose crypto globally. */
+function uuid() {
+  const platform = globalThis.crypto;
+  if (platform && typeof platform.randomUUID === "function") return platform.randomUUID();
+  return "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, ch => {
+    const r = Math.floor(Math.random() * 16);
+    return (ch === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
 
 /* -------------------- ERRORS -------------------- */
 
@@ -111,7 +125,7 @@ function createGame(options) {
     return {
       id: `p${index + 1}`,
       name,
-      secret: crypto.randomUUID(),
+      secret: uuid(),
       tokens: 0,
       hand: [],
       discards: [],
@@ -130,7 +144,7 @@ function createGame(options) {
   }
 
   const game = {
-    id: crypto.randomUUID(),
+    id: uuid(),
     createdAt: new Date().toISOString(),
     seed: opts.seed === undefined ? null : Number(opts.seed),
     rng: opts.seed === undefined ? Math.random : mulberry32(Number(opts.seed)),
@@ -647,7 +661,7 @@ function privateView(game, playerId) {
   return view;
 }
 
-module.exports = {
+return {
   GameError,
   createGame,
   play,
@@ -665,3 +679,4 @@ module.exports = {
   mulberry32,
   shuffle
 };
+});

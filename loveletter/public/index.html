@@ -1,0 +1,959 @@
+<title>Love Letter at Court</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Karla:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #EDEAE3;
+    --surface: #FAF8F4;
+    --stock: #FFFDF9;
+    --ink: #171A2E;
+    --ink-soft: #565B75;
+    --ink-faint: #8B90A6;
+    --rule: #D3CEC3;
+    --rule-soft: #E2DED5;
+    --brass: #A8813C;
+    --brass-soft: #C9A867;
+    --wax: #8E2B3C;
+    --shadow: 23 26 46;
+    --radius: 3px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0F1120;
+      --surface: #191C31;
+      --stock: #20233A;
+      --ink: #E9E6DE;
+      --ink-soft: #A3A8C0;
+      --ink-faint: #71769170;
+      --rule: #2E3252;
+      --rule-soft: #262943;
+      --brass: #D0A250;
+      --brass-soft: #8C6E33;
+      --wax: #C4515F;
+      --shadow: 0 0 0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0F1120;
+    --surface: #191C31;
+    --stock: #20233A;
+    --ink: #E9E6DE;
+    --ink-soft: #A3A8C0;
+    --ink-faint: #717691;
+    --rule: #2E3252;
+    --rule-soft: #262943;
+    --brass: #D0A250;
+    --brass-soft: #8C6E33;
+    --wax: #C4515F;
+    --shadow: 0 0 0;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: auto; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: Karla, "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px 64px; }
+
+  /* -------- status rail -------- */
+  .rail {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 20;
+    background: color-mix(in srgb, var(--ground) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--rule);
+    margin: 0 0 20px;
+    padding: 10px 16px;
+  }
+  .rail-in {
+    max-width: 980px; margin: 0 auto;
+    display: flex; align-items: baseline; gap: 10px 18px; flex-wrap: wrap;
+  }
+  .brandmark {
+    font-family: Fraunces, Georgia, serif;
+    font-weight: 600; font-size: 19px; letter-spacing: -0.01em;
+    margin-right: auto;
+  }
+  .brandmark em { font-style: italic; color: var(--brass); }
+  .stat { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .stat b { color: var(--ink); font-weight: 500; }
+
+  /* -------- headings -------- */
+  h2 {
+    font-family: Fraunces, Georgia, serif;
+    font-weight: 600; font-size: 20px; margin: 0 0 4px;
+    text-wrap: balance; letter-spacing: -0.01em;
+  }
+  .eyebrow {
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-faint); font-weight: 700; margin: 0 0 10px;
+  }
+  .sub { color: var(--ink-soft); margin: 0 0 14px; font-size: 14px; max-width: 62ch; }
+
+  /* -------- panels -------- */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 18px;
+  }
+  .panel.quiet { background: none; border-style: dashed; }
+
+  /* -------- setup -------- */
+  .seats-edit { display: flex; flex-direction: column; gap: 8px; margin: 14px 0 18px; }
+  .seat-row { display: flex; gap: 8px; align-items: center; }
+  .seat-row input[type="text"] {
+    flex: 1; min-width: 0;
+    font: inherit; color: var(--ink);
+    background: var(--stock);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 7px 10px;
+  }
+  .seat-row input:focus-visible, button:focus-visible, select:focus-visible {
+    outline: 2px solid var(--brass); outline-offset: 1px;
+  }
+  .toggle {
+    display: inline-flex; border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden;
+  }
+  .toggle button {
+    font: inherit; font-size: 12px; padding: 6px 12px; border: 0; cursor: pointer;
+    background: var(--stock); color: var(--ink-soft);
+  }
+  .toggle button[aria-pressed="true"] { background: var(--ink); color: var(--ground); }
+  .seat-no { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-faint); width: 16px; }
+
+  .btn {
+    font: inherit; font-weight: 700; font-size: 14px;
+    background: var(--ink); color: var(--ground);
+    border: 1px solid var(--ink); border-radius: var(--radius);
+    padding: 9px 18px; cursor: pointer;
+  }
+  .btn:hover { background: color-mix(in srgb, var(--ink) 85%, var(--brass)); }
+  .btn.ghost { background: none; color: var(--ink); border-color: var(--rule); font-weight: 500; }
+  .btn.ghost:hover { border-color: var(--brass); background: none; }
+  .btn.small { font-size: 12px; padding: 5px 11px; }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+  /* -------- table of seats -------- */
+  .seats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 18px; }
+  .seat {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+  }
+  .seat[data-turn="true"] { border-left-color: var(--brass); background: color-mix(in srgb, var(--surface) 88%, var(--brass)); }
+  .seat[data-out="true"] { opacity: 0.5; border-left-color: var(--wax); }
+  .seat-name { font-weight: 700; font-size: 14px; }
+  .seat-tag {
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-faint); font-weight: 700;
+  }
+  .seat-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .pips { letter-spacing: 2px; font-size: 11px; color: var(--brass); white-space: nowrap; }
+  .pips .empty { color: var(--ink-faint); opacity: 0.5; }
+  .status-line { font-size: 12px; color: var(--ink-soft); min-height: 18px; margin-top: 2px; }
+  .status-line .shield { color: var(--brass); font-weight: 700; }
+  .status-line .gone { color: var(--wax); font-weight: 700; }
+  .disc { display: flex; gap: 3px; flex-wrap: wrap; margin-top: 7px; min-height: 20px; }
+  .chip {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px; font-variant-numeric: tabular-nums;
+    width: 20px; height: 20px; display: grid; place-items: center;
+    background: var(--stock); border: 1px solid var(--rule-soft); border-radius: 2px;
+    color: var(--ink-soft);
+  }
+  .chip[data-high="true"] { border-color: var(--brass-soft); color: var(--brass); }
+
+  /* -------- cards -------- */
+  .hand { display: flex; gap: 12px; flex-wrap: wrap; }
+  .card {
+    position: relative;
+    flex: 1 1 190px; max-width: 260px; min-height: 176px;
+    text-align: left;
+    display: flex; flex-direction: column; gap: 6px;
+    background: var(--stock);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 14px 14px 12px;
+    cursor: pointer; font: inherit; color: var(--ink);
+    box-shadow: 0 1px 0 rgb(var(--shadow) / 0.06), 0 6px 18px -12px rgb(var(--shadow) / 0.5);
+    transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+  }
+  .card::after {
+    content: ""; position: absolute; inset: 4px; border: 1px solid var(--rule-soft);
+    border-radius: 1px; pointer-events: none;
+  }
+  .card:hover:not(:disabled) { transform: translateY(-3px); border-color: var(--brass-soft); }
+  .card[aria-pressed="true"] { border-color: var(--brass); box-shadow: 0 0 0 1px var(--brass); transform: translateY(-3px); }
+  .card:disabled { cursor: not-allowed; opacity: 0.42; }
+  .card .rank {
+    font-family: Fraunces, Georgia, serif; font-weight: 700; font-size: 34px; line-height: 1;
+    color: var(--brass); font-variant-numeric: lining-nums;
+  }
+  .card .cname {
+    font-family: Fraunces, Georgia, serif; font-size: 19px; font-weight: 600; line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .card .ctext { font-size: 12.5px; line-height: 1.4; color: var(--ink-soft); }
+  .card .seal {
+    position: absolute; top: 12px; right: 12px;
+    width: 9px; height: 9px; border-radius: 50%; background: var(--wax); opacity: 0.85;
+  }
+  .card.mini { min-height: 0; flex: 0 1 auto; padding: 8px 12px; }
+  .card.mini .rank { font-size: 20px; }
+  .card.mini .cname { font-size: 15px; }
+
+  /* -------- action strip -------- */
+  .ask { margin-top: 14px; border-top: 1px solid var(--rule); padding-top: 12px; }
+  .ask-label { font-size: 12px; color: var(--ink-soft); margin-bottom: 8px; }
+  .opts { display: flex; gap: 6px; flex-wrap: wrap; }
+  .opt {
+    font: inherit; font-size: 13px; cursor: pointer;
+    background: var(--stock); color: var(--ink);
+    border: 1px solid var(--rule); border-radius: var(--radius);
+    padding: 6px 12px;
+  }
+  .opt:hover { border-color: var(--brass); }
+  .opt .n { font-family: "IBM Plex Mono", monospace; color: var(--brass); font-size: 11px; margin-right: 5px; }
+  .opt .odds { color: var(--ink-faint); font-size: 11px; margin-left: 5px; font-family: "IBM Plex Mono", monospace; }
+
+  /* -------- stage -------- */
+  .stage { text-align: center; padding: 26px 18px; }
+  .curtain-name { font-family: Fraunces, Georgia, serif; font-size: 27px; font-weight: 600; margin: 4px 0 2px; }
+  .beat { font-size: 13.5px; color: var(--ink-soft); font-family: "IBM Plex Mono", monospace; }
+  .reveal-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 14px 0; }
+  .reveal {
+    background: var(--stock); border: 1px solid var(--rule); border-radius: var(--radius);
+    padding: 8px 12px; min-width: 104px;
+  }
+  .reveal[data-won="true"] { border-color: var(--brass); box-shadow: inset 0 0 0 1px var(--brass); }
+  .reveal .who { font-size: 12px; color: var(--ink-soft); }
+  .reveal .what { font-family: Fraunces, Georgia, serif; font-size: 16px; font-weight: 600; }
+  .verdict { font-family: Fraunces, Georgia, serif; font-size: 21px; font-weight: 600; margin: 6px 0; }
+  .verdict .win { color: var(--brass); }
+
+  /* -------- notes, counter, log -------- */
+  .notes { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; }
+  .note {
+    font-size: 12.5px; color: var(--ink); background: color-mix(in srgb, var(--surface) 80%, var(--brass));
+    border-left: 2px solid var(--brass); padding: 5px 9px; border-radius: 0 2px 2px 0;
+  }
+  details.counter { margin-bottom: 18px; }
+  details.counter summary {
+    cursor: pointer; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    font-weight: 700; color: var(--ink-faint); padding: 6px 0;
+  }
+  details.counter summary::marker { color: var(--rule); }
+  .tally { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 6px; margin-top: 8px; }
+  .tally-item {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 6px;
+    border-bottom: 1px solid var(--rule-soft); padding: 4px 2px;
+    font-size: 12.5px;
+  }
+  .tally-item .left { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--brass); }
+  .tally-item.spent { opacity: 0.35; }
+  .tally-item .nm { flex: 1; }
+  .tally-item .ct { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+  .log { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--ink-soft); }
+  .log div { padding: 2px 0; border-bottom: 1px solid var(--rule-soft); }
+  .log div:last-child { border-bottom: 0; color: var(--ink); }
+  .credit { font-size: 11.5px; color: var(--ink-faint); text-align: center; margin-top: 26px; line-height: 1.6; }
+
+  @media (max-width: 460px) {
+    .card { min-height: 152px; flex-basis: 100%; max-width: none; }
+    .brandmark { font-size: 17px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<div class="rail">
+  <div class="rail-in">
+    <span class="brandmark">Love Letter <em>at Court</em></span>
+    <span class="stat" id="stat-round"></span>
+    <span class="stat" id="stat-deck"></span>
+    <span class="stat" id="stat-goal"></span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div id="setup" class="panel">
+    <p class="eyebrow">Take your seats</p>
+    <h2>Who is courting the Princess?</h2>
+    <p class="sub">Two to six suitors. Mark a seat as yours to play it, or leave it to the court and let a bot take the turn. Several human seats pass the device around with a curtain between turns.</p>
+    <div class="seats-edit" id="seats-edit"></div>
+    <div class="btn-row">
+      <button class="btn ghost small" id="add-seat" type="button">Add a seat</button>
+      <button class="btn ghost small" id="drop-seat" type="button">Remove a seat</button>
+      <span style="flex:1"></span>
+      <button class="btn" id="start" type="button">Deal the round</button>
+    </div>
+  </div>
+
+  <div id="game" hidden>
+    <div class="seats" id="seats"></div>
+
+    <div id="stage-panel" class="panel stage" hidden></div>
+
+    <div id="turn-panel" class="panel" hidden>
+      <p class="eyebrow" id="turn-eyebrow"></p>
+      <h2 id="turn-title"></h2>
+      <p class="sub" id="turn-sub"></p>
+      <div class="hand" id="hand"></div>
+      <div class="ask" id="ask" hidden></div>
+      <div class="notes" id="notes"></div>
+    </div>
+
+    <details class="counter" id="counter-wrap">
+      <summary>Still unaccounted for</summary>
+      <div class="tally" id="tally"></div>
+    </details>
+
+    <div class="panel">
+      <p class="eyebrow">At the table</p>
+      <div class="log" id="log"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn ghost small" id="restart" type="button">Abandon the game</button>
+    </div>
+  </div>
+
+  <p class="credit">
+    Love Letter was designed by Seiji Kanai. This is a hobby implementation of the 2019 edition’s rules —
+    21 cards, two to six players — playing on the same engine that backs the REST API.
+  </p>
+</div>
+
+<script src="lib/cards.js"></script>
+<script src="lib/engine.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var C = window.LoveLetterCards;
+  var E = window.LoveLetterEngine;
+
+  var seats = [
+    { name: "You", bot: false },
+    { name: "Rosalind", bot: true },
+    { name: "Orsino", bot: true },
+    { name: "Viola", bot: true }
+  ];
+
+  var game = null;
+  var mode = "setup";      // setup | turn | chancellor | bot | curtain | roundover | gameover
+  var revealedFor = null;  // the human seat that has lifted the curtain this turn
+  var picked = null;       // the card a human has selected but not yet committed
+  var lastOutcome = null;  // what the human's own card just did
+  var botTimer = null;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var seatOf = function (playerId) { return seats[Number(playerId.slice(1)) - 1]; };
+  var humanSeats = function () { return seats.filter(function (s) { return !s.bot; }); };
+
+  /* ---------------- setup ---------------- */
+
+  function renderSetup() {
+    var box = $("seats-edit");
+    box.innerHTML = "";
+    seats.forEach(function (seat, i) {
+      var row = document.createElement("div");
+      row.className = "seat-row";
+
+      var no = document.createElement("span");
+      no.className = "seat-no";
+      no.textContent = String(i + 1);
+
+      var input = document.createElement("input");
+      input.type = "text";
+      input.id = "seat-name-" + i;
+      input.value = seat.name;
+      input.setAttribute("aria-label", "Name of seat " + (i + 1));
+      input.addEventListener("input", function () { seat.name = input.value; });
+
+      var toggle = document.createElement("div");
+      toggle.className = "toggle";
+      [["Me", false], ["Bot", true]].forEach(function (pair) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.textContent = pair[0];
+        b.setAttribute("aria-pressed", String(seat.bot === pair[1]));
+        b.addEventListener("click", function () { seat.bot = pair[1]; renderSetup(); });
+        toggle.appendChild(b);
+      });
+
+      row.append(no, input, toggle);
+      box.appendChild(row);
+    });
+    $("add-seat").disabled = seats.length >= C.MAX_PLAYERS;
+    $("drop-seat").disabled = seats.length <= C.MIN_PLAYERS;
+  }
+
+  $("add-seat").addEventListener("click", function () {
+    var pool = ["Bianca", "Lucio", "Isabel", "Ferdinand"];
+    seats.push({ name: pool[(seats.length - 4 + pool.length) % pool.length], bot: true });
+    renderSetup();
+  });
+  $("drop-seat").addEventListener("click", function () { seats.pop(); renderSetup(); });
+
+  $("start").addEventListener("click", function () {
+    seats.forEach(function (s, i) { s.name = (s.name || "").trim() || "Seat " + (i + 1); });
+    game = E.createGame({ players: seats.map(function (s) { return s.name; }) });
+    $("setup").hidden = true;
+    $("game").hidden = false;
+    revealedFor = null;
+    advance();
+  });
+
+  $("restart").addEventListener("click", function () {
+    clearTimeout(botTimer);
+    game = null;
+    mode = "setup";
+    $("setup").hidden = false;
+    $("game").hidden = true;
+    renderSetup();
+    renderRail();
+  });
+
+  /* ---------------- flow ---------------- */
+
+  function advance() {
+    clearTimeout(botTimer);
+    picked = null;
+
+    if (!game) return;
+    if (game.status === "complete") { mode = "gameover"; return render(); }
+    if (game.round.phase === "over") { mode = "roundover"; return render(); }
+
+    var pid = E.current(game).id;
+    if (seatOf(pid).bot) {
+      mode = "bot";
+      render();
+      botTimer = setTimeout(botMove, 950);
+      return;
+    }
+    if (humanSeats().length > 1 && revealedFor !== pid) {
+      mode = "curtain";
+      return render();
+    }
+    revealedFor = pid;
+    mode = game.round.phase === "chancellor" ? "chancellor" : "turn";
+    render();
+  }
+
+  function afterHumanAction() {
+    revealedFor = null;
+    advance();
+  }
+
+  /* ---------------- bots ---------------- */
+
+  function unseen(playerId) {
+    var counts = {};
+    C.buildDeck().forEach(function (c) { counts[c] = (counts[c] || 0) + 1; });
+    game.players.forEach(function (p) {
+      p.discards.forEach(function (c) { counts[c] -= 1; });
+    });
+    game.round.setAside.forEach(function (c) { counts[c] -= 1; });
+    if (playerId) {
+      E.findPlayer(game, playerId).hand.forEach(function (c) { counts[c] -= 1; });
+    }
+    return counts;
+  }
+
+  function likeliestGuess(playerId) {
+    var counts = unseen(playerId);
+    var best = C.SPY, bestCount = -1;
+    Object.keys(counts).forEach(function (key) {
+      var value = Number(key);
+      if (value === C.GUARD) return;
+      if (counts[key] > bestCount) { bestCount = counts[key]; best = value; }
+    });
+    return best;
+  }
+
+  function otherCard(hand, card) {
+    var rest = hand.slice();
+    rest.splice(rest.indexOf(card), 1);
+    return rest.length ? rest[0] : card;
+  }
+
+  /* Prefer whoever is closest to winning. */
+  function pickTarget(targets, selfId) {
+    var others = targets.filter(function (id) { return id !== selfId; });
+    var pool = others.length ? others : targets;
+    return pool.slice().sort(function (a, b) {
+      return E.findPlayer(game, b).tokens - E.findPlayer(game, a).tokens;
+    })[0];
+  }
+
+  function scorePlay(action, hand, selfId) {
+    var keeping = otherCard(hand, action.card);
+    var onlySelf = action.requiresTarget &&
+      action.targets.length === 1 && action.targets[0] === selfId;
+
+    switch (action.card) {
+      case C.SPY: return 5;
+      case C.GUARD: return action.requiresTarget ? 7 : 4;
+      case C.PRIEST: return action.requiresTarget ? 5 : 3;
+      case C.BARON:
+        if (!action.requiresTarget) return 3;
+        return keeping >= 6 ? 8 : keeping >= 4 ? 5 : 1;
+      case C.HANDMAID: return 7;
+      case C.PRINCE:
+        if (onlySelf) return keeping === C.PRINCESS ? -100 : 3;
+        return 6;
+      case C.CHANCELLOR: return 5;
+      case C.KING: return action.requiresTarget && keeping <= 3 ? 6 : 2;
+      case C.COUNTESS: return 4;
+      case C.PRINCESS: return -100;
+      default: return 0;
+    }
+  }
+
+  function botMove() {
+    if (!game || game.status !== "in_progress" || game.round.phase === "over") return;
+    var pid = E.current(game).id;
+    var actions = E.legalActions(game, pid);
+    if (!actions.length) return;
+
+    if (actions[0].type === "chancellor") {
+      E.chancellor(game, pid, { keep: chooseKeep(actions[0].pool) });
+      return advance();
+    }
+
+    var hand = E.findPlayer(game, pid).hand;
+    var best = actions.slice().sort(function (a, b) {
+      var diff = scorePlay(b, hand, pid) - scorePlay(a, hand, pid);
+      return diff !== 0 ? diff : a.card - b.card;   // tie: shed the lower card
+    })[0];
+
+    E.play(game, pid, {
+      card: best.card,
+      target: best.requiresTarget ? pickTarget(best.targets, pid) : undefined,
+      guess: best.requiresGuess ? likeliestGuess(pid) : undefined
+    });
+    advance();
+  }
+
+  /* The Princess wins a showdown but is a liability to hold. */
+  function chooseKeep(pool) {
+    return pool.slice().sort(function (a, b) {
+      var wa = a === C.PRINCESS ? 4.5 : a;
+      var wb = b === C.PRINCESS ? 4.5 : b;
+      return wb - wa;
+    })[0];
+  }
+
+  /* ---------------- rendering ---------------- */
+
+  function cardNode(value, opts) {
+    var options = opts || {};
+    var el = document.createElement(options.static ? "div" : "button");
+    el.className = "card" + (options.mini ? " mini" : "");
+    if (!options.static) el.type = "button";
+
+    var rank = document.createElement("span");
+    rank.className = "rank";
+    rank.textContent = String(value);
+
+    var name = document.createElement("span");
+    name.className = "cname";
+    name.textContent = C.CARDS[value].name;
+
+    el.append(rank, name);
+
+    if (!options.mini) {
+      var text = document.createElement("span");
+      text.className = "ctext";
+      text.textContent = C.CARDS[value].text;
+      el.appendChild(text);
+    }
+    if (value >= C.KING) {
+      var seal = document.createElement("span");
+      seal.className = "seal";
+      el.appendChild(seal);
+    }
+    return el;
+  }
+
+  function renderRail() {
+    if (!game) {
+      $("stat-round").textContent = "";
+      $("stat-deck").textContent = "";
+      $("stat-goal").textContent = "";
+      return;
+    }
+    $("stat-round").innerHTML = "Round <b>" + game.round.number + "</b>";
+    $("stat-deck").innerHTML = "Deck <b>" + game.round.deck.length + "</b>";
+    $("stat-goal").innerHTML = "First to <b>" + game.tokensToWin + "</b> tokens";
+  }
+
+  function renderSeats() {
+    var box = $("seats");
+    box.innerHTML = "";
+    var turnId = game.round.phase === "over" ? null : E.current(game).id;
+
+    game.players.forEach(function (p, i) {
+      var seat = document.createElement("div");
+      seat.className = "seat";
+      seat.dataset.turn = String(p.id === turnId);
+      seat.dataset.out = String(p.eliminated);
+
+      var top = document.createElement("div");
+      top.className = "seat-top";
+      var nm = document.createElement("span");
+      nm.className = "seat-name";
+      nm.textContent = p.name;
+      var tag = document.createElement("span");
+      tag.className = "seat-tag";
+      tag.textContent = seats[i].bot ? "bot" : "you";
+      top.append(nm, tag);
+
+      var pips = document.createElement("div");
+      pips.className = "pips";
+      var earned = "", left = "";
+      for (var t = 0; t < p.tokens; t++) earned += "●";
+      for (var u = p.tokens; u < game.tokensToWin; u++) left += "○";
+      pips.innerHTML = earned + '<span class="empty">' + left + "</span>";
+
+      var status = document.createElement("div");
+      status.className = "status-line";
+      if (p.eliminated) status.innerHTML = '<span class="gone">out of the round</span>';
+      else if (p.protected) status.innerHTML = '<span class="shield">behind the Handmaid</span>';
+      else if (p.id === turnId) status.textContent = "to play";
+      else status.textContent = "holding " + p.hand.length + " card" + (p.hand.length === 1 ? "" : "s");
+
+      var disc = document.createElement("div");
+      disc.className = "disc";
+      p.discards.forEach(function (d) {
+        var chip = document.createElement("span");
+        chip.className = "chip";
+        chip.dataset.high = String(d >= C.KING);
+        chip.textContent = String(d);
+        chip.title = C.CARDS[d].name;
+        disc.appendChild(chip);
+      });
+
+      seat.append(top, pips, status, disc);
+      box.appendChild(seat);
+    });
+  }
+
+  function renderTally() {
+    var viewer = mode === "turn" || mode === "chancellor" ? E.current(game).id : null;
+    var counts = unseen(viewer);
+    var box = $("tally");
+    box.innerHTML = "";
+    Object.keys(C.CARDS).forEach(function (key) {
+      var value = Number(key);
+      var item = document.createElement("div");
+      item.className = "tally-item" + (counts[value] <= 0 ? " spent" : "");
+      item.innerHTML =
+        '<span class="left">' + value + '</span>' +
+        '<span class="nm">' + C.CARDS[value].name + '</span>' +
+        '<span class="ct">' + Math.max(0, counts[value]) + "/" + C.CARDS[value].count + "</span>";
+      box.appendChild(item);
+    });
+  }
+
+  function renderLog() {
+    var lines = game.round.log.filter(function (l) { return l.to === null; }).slice(-7);
+    var box = $("log");
+    box.innerHTML = "";
+    lines.forEach(function (line) {
+      var row = document.createElement("div");
+      row.textContent = line.text;
+      box.appendChild(row);
+    });
+  }
+
+  /* Only one of the two panels holds live controls at a time. */
+  function stage(html) {
+    $("turn-panel").hidden = true;
+    $("hand").innerHTML = "";
+    $("ask").innerHTML = "";
+    $("notes").innerHTML = "";
+    $("stage-panel").hidden = false;
+    $("stage-panel").innerHTML = html;
+  }
+
+  function render() {
+    renderRail();
+    if (!game) return;
+    renderSeats();
+    renderTally();
+    renderLog();
+    $("counter-wrap").hidden = false;
+
+    if (mode === "curtain") return renderCurtain();
+    if (mode === "bot") return renderBot();
+    if (mode === "roundover") return renderRoundOver();
+    if (mode === "gameover") return renderGameOver();
+    return renderTurn();
+  }
+
+  function renderCurtain() {
+    var p = E.current(game);
+    stage(
+      '<p class="eyebrow">Pass the device</p>' +
+      '<div class="curtain-name">' + escape(p.name) + "</div>" +
+      '<p class="beat">Nobody else should be looking.</p>' +
+      '<div class="btn-row" style="justify-content:center;margin-top:16px">' +
+      '<button class="btn" id="lift" type="button">See my hand</button></div>'
+    );
+    $("lift").addEventListener("click", function () {
+      revealedFor = p.id;
+      mode = game.round.phase === "chancellor" ? "chancellor" : "turn";
+      render();
+    });
+  }
+
+  function renderBot() {
+    var p = E.current(game);
+    var lines = game.round.log.filter(function (l) { return l.to === null; });
+    stage(
+      '<p class="eyebrow">The court deliberates</p>' +
+      '<div class="curtain-name">' + escape(p.name) + " is choosing</div>" +
+      '<p class="beat">' + escape(lines.length ? lines[lines.length - 1].text : "") + "</p>"
+    );
+  }
+
+  function renderRoundOver() {
+    var result = game.round.result;
+    var names = result.winners.map(function (id) { return E.findPlayer(game, id).name; });
+    var line =
+      result.reason === "last_standing" ? "last suitor standing"
+      : result.reason === "shared" ? "an even match — the round is shared"
+      : "the highest card at the showdown";
+
+    var reveals = result.reveals.map(function (r) {
+      return '<div class="reveal" data-won="' + (result.winners.indexOf(r.playerId) >= 0) + '">' +
+        '<div class="who">' + escape(r.name) + "</div>" +
+        '<div class="what">' + C.CARDS[r.card].name + "</div></div>";
+    }).join("");
+
+    var spy = result.spyBonus
+      ? '<p class="beat">' + escape(E.findPlayer(game, result.spyBonus).name) +
+        " was the only spy left standing — an extra token.</p>"
+      : "";
+
+    stage(
+      '<p class="eyebrow">Round ' + game.round.number + " is settled</p>" +
+      '<div class="verdict"><span class="win">' + escape(names.join(" and ")) + "</span> " +
+        (names.length > 1 ? "take the round" : "takes the round") + "</div>" +
+      '<p class="beat">' + line + "</p>" +
+      '<div class="reveal-row">' + reveals + "</div>" + spy +
+      '<div class="btn-row" style="justify-content:center;margin-top:8px">' +
+      '<button class="btn" id="next" type="button">Deal the next round</button></div>'
+    );
+    $("next").addEventListener("click", function () {
+      E.nextRound(game);
+      revealedFor = null;
+      advance();
+    });
+  }
+
+  function renderGameOver() {
+    var names = game.winners.map(function (id) { return E.findPlayer(game, id).name; });
+    stage(
+      '<p class="eyebrow">The letter is delivered</p>' +
+      '<div class="verdict"><span class="win">' + escape(names.join(" and ")) + "</span> " +
+        (names.length > 1 ? "win the Princess’s favour" : "wins the Princess’s favour") + "</div>" +
+      '<p class="beat">' + game.tokensToWin + " tokens of affection.</p>" +
+      '<div class="btn-row" style="justify-content:center;margin-top:16px">' +
+      '<button class="btn" id="again" type="button">Play again</button></div>'
+    );
+    $("again").addEventListener("click", function () { $("restart").click(); });
+  }
+
+  function renderTurn() {
+    $("stage-panel").hidden = true;
+    $("stage-panel").innerHTML = "";
+    $("turn-panel").hidden = false;
+
+    var p = E.current(game);
+    var view = E.privateView(game, p.id);
+    var actions = view.you.legalActions;
+
+    $("hand").innerHTML = "";
+    $("ask").hidden = true;
+    $("ask").innerHTML = "";
+
+    if (mode === "chancellor") {
+      renderChancellor(p, actions[0]);
+    } else {
+      $("turn-eyebrow").textContent = "Your turn";
+      $("turn-title").textContent = p.name + ", play one card";
+      $("turn-sub").textContent = view.you.mustPlayCountess
+        ? "The Countess will not sit beside a King or a Prince — she must be the one you play."
+        : "The card you keep is the one you are judged on when the deck runs out.";
+
+      view.you.hand.forEach(function (value, index) {
+        var action = actions.filter(function (a) { return a.card === value; })[0];
+        var el = cardNode(value);
+        el.disabled = !action;
+        el.setAttribute("aria-pressed", String(picked === index));
+        if (action) {
+          el.addEventListener("click", function () {
+            picked = picked === index ? null : index;
+            renderTurn();
+          });
+        }
+        $("hand").appendChild(el);
+      });
+
+      if (picked !== null && view.you.hand[picked] !== undefined) {
+        askFor(p, actions.filter(function (a) { return a.card === view.you.hand[picked]; })[0]);
+      }
+    }
+
+    var notes = $("notes");
+    notes.innerHTML = "";
+    var shown = view.you.notes.slice();
+    if (lastOutcome) shown.push(lastOutcome);
+    shown.forEach(function (text) {
+      var n = document.createElement("div");
+      n.className = "note";
+      n.textContent = text;
+      notes.appendChild(n);
+    });
+  }
+
+  function askFor(player, action) {
+    if (!action) return;
+    var ask = $("ask");
+    ask.hidden = false;
+
+    if (action.requiresTarget) {
+      ask.appendChild(label("Play the " + C.CARDS[action.card].name + " on"));
+      var row = document.createElement("div");
+      row.className = "opts";
+      action.targets.forEach(function (id) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "opt";
+        b.textContent = id === player.id ? "Yourself" : E.findPlayer(game, id).name;
+        b.addEventListener("click", function () {
+          if (action.requiresGuess) askGuess(player, action, id);
+          else commit(player, { card: action.card, target: id });
+        });
+        row.appendChild(b);
+      });
+      ask.appendChild(row);
+    } else {
+      ask.appendChild(label(
+        C.needsTarget(action.card)
+          ? "Everyone else is protected or out, so the " + C.CARDS[action.card].name + " has no effect."
+          : "Play the " + C.CARDS[action.card].name + "?"
+      ));
+      var row2 = document.createElement("div");
+      row2.className = "opts";
+      var go = document.createElement("button");
+      go.type = "button";
+      go.className = "opt";
+      go.textContent = "Play it";
+      go.addEventListener("click", function () { commit(player, { card: action.card }); });
+      row2.appendChild(go);
+      ask.appendChild(row2);
+    }
+  }
+
+  function askGuess(player, action, targetId) {
+    var ask = $("ask");
+    ask.innerHTML = "";
+    ask.appendChild(label("Name the card " + E.findPlayer(game, targetId).name + " is holding"));
+    var counts = unseen(player.id);
+    var row = document.createElement("div");
+    row.className = "opts";
+    action.guessOptions.forEach(function (value) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "opt";
+      b.innerHTML = '<span class="n">' + value + "</span>" + C.CARDS[value].name +
+        '<span class="odds">' + Math.max(0, counts[value]) + " left</span>";
+      b.addEventListener("click", function () {
+        commit(player, { card: action.card, target: targetId, guess: value });
+      });
+      row.appendChild(b);
+    });
+    ask.appendChild(row);
+  }
+
+  function renderChancellor(player, action) {
+    $("turn-eyebrow").textContent = "The Chancellor";
+    $("turn-title").textContent = "Keep one, bury the rest";
+    $("turn-sub").textContent =
+      "The other " + (action.pool.length - 1) + " go to the bottom of the deck.";
+
+    action.pool.forEach(function (value) {
+      var el = cardNode(value);
+      el.addEventListener("click", function () {
+        E.chancellor(game, player.id, { keep: value });
+        lastOutcome = null;
+        afterHumanAction();
+      });
+      $("hand").appendChild(el);
+    });
+  }
+
+  function commit(player, move) {
+    var outcome = E.play(game, player.id, move);
+    lastOutcome = describe(outcome, move);
+    picked = null;
+
+    /* The Chancellor keeps the turn open for the same player. */
+    if (game.round.phase === "chancellor" && E.current(game).id === player.id) {
+      mode = "chancellor";
+      return render();
+    }
+    afterHumanAction();
+  }
+
+  function describe(outcome, move) {
+    if (!outcome) return null;
+    var who = move.target ? E.findPlayer(game, move.target).name : "";
+    switch (outcome.effect) {
+      case "priest": return who + " is holding the " + C.CARDS[outcome.reveal].name + ".";
+      case "baron":
+        return who + " held the " + C.CARDS[outcome.theirCard].name + " against your " +
+          C.CARDS[outcome.yourCard].name + ".";
+      case "king": return "You took the " + C.CARDS[outcome.received].name + " from " + who + ".";
+      case "guard":
+        return outcome.correct
+          ? "Correct — " + who + " is out."
+          : who + " was not holding the " + C.CARDS[outcome.guess].name + ".";
+      default: return null;
+    }
+  }
+
+  function label(text) {
+    var el = document.createElement("div");
+    el.className = "ask-label";
+    el.textContent = text;
+    return el;
+  }
+
+  function escape(text) {
+    var d = document.createElement("div");
+    d.textContent = String(text);
+    return d.innerHTML;
+  }
+
+  renderSetup();
+  renderRail();
+})();
+</script>

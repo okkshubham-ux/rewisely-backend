@@ -1,3 +1,10 @@
+(function (root, factory) {
+  if (typeof module === "object" && module.exports) {
+    module.exports = factory();
+  } else {
+    root.LoveLetterCards = factory();
+  }
+})(typeof self !== "undefined" ? self : globalThis, function () {
 "use strict";
 
 /*
@@ -114,7 +121,7 @@ function name(card) {
   return CARDS[card].name;
 }
 
-module.exports = {
+return {
   SPY,
   GUARD,
   PRIEST,
@@ -136,3 +143,4 @@ module.exports = {
   canTargetSelf,
   name
 };
+});
